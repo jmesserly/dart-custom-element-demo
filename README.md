@@ -1,2 +1,4 @@
-# dart-custom-element-demo
-Example of a custom element written in Dart, using JS interop for registration
+An absolute bare-bones web app.
+
+Created from templates made available by Stagehand under a BSD-style
+[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
