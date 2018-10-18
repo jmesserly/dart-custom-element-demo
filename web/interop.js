@@ -1,9 +1,24 @@
-class DemoElement extends HTMLElement {
-  constructor() {
-    super();
-    // createInstance is provided by Dart.
-    DemoElement.createInstance(this);
+class CustomElement extends HTMLElement {
+  constructor() { 
+    super(); 
+    this.asDart = null;
+  }
+
+  connectedCallback() {
+    this.asDart.connected();
+  }
+
+  disconnectedCallback() {
+    this.asDart.disconnected();
   }
 }
-window.DemoElement = DemoElement;
-customElements.define('dart-demo', DemoElement);
+window.CustomElement = CustomElement;
+
+function defineElement(name, construct) {
+  customElements.define(name, class extends CustomElement {
+    constructor() {
+      super();
+      construct(this);
+    }
+  });
+};

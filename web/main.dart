@@ -4,26 +4,52 @@ library main;
 import 'dart:html';
 import 'package:js/js.dart';
 
-@JS('DemoElement')
-abstract class JSDemoElement implements HtmlElement {
-  DemoElement asDart;
-
-  static DemoElement Function(JSDemoElement e) createInstance;
+@JS('CustomElement')
+abstract class JSCustomElement<T extends CustomElement> implements HtmlElement {
+  T asDart;
 }
 
-class DemoElement {
-  final JSDemoElement _element;
-  DemoElement(this._element) {
-    _element.asDart = this;
+typedef CustomElementConstructor = CustomElement Function(JSCustomElement e);
+
+@JS('defineElement')
+external void defineElement(String name, CustomElementConstructor constructor);
+
+class CustomElement {
+  final JSCustomElement element;
+
+  CustomElement(this.element) {
+    element.asDart = this;
   }
+
+  void connected() {}
+  void disconnected() {}
+}
+
+class HelloElement extends CustomElement{
+  HelloElement(JSCustomElement element) : super(element);
+
   void sayHello() {
-    _element.text = 'Hello from Dart!';
-    _element.style.color = '#0175C2';
+    element.text = 'Hello from Dart!';
+    element.style.color = '#0175C2';
+  }
+}
+
+class GoodbyeElement extends CustomElement {
+  GoodbyeElement(JSCustomElement element) : super(element);
+
+  void sayGoodybe() {
+    element.text = 'Goodbye from Dart!';
+    element.style.color = '#0175C2';
   }
 }
 
 void main() {
-  JSDemoElement.createInstance = allowInterop((e) => DemoElement(e));
-  var demo = document.body.append(Element.tag('dart-demo')) as JSDemoElement;
-  demo.asDart.sayHello();
+  defineElement('dart-goodbye', allowInterop((e) => GoodbyeElement(e)));
+  defineElement('dart-hello', allowInterop((e) => HelloElement(e)));
+
+  var hello = document.body.append(Element.tag('dart-hello')) as JSCustomElement<HelloElement>;
+  hello.asDart.sayHello();
+
+  var goodbye = document.body.append(Element.tag('dart-goodbye')) as JSCustomElement<GoodbyeElement>;
+  goodbye.asDart.sayGoodybe();
 }
