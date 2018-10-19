@@ -1,55 +1,27 @@
-@JS()
-library main;
+import 'package:html_proto/html.dart';
+import 'package:html_proto/src/js.dart' as js;
 
-import 'dart:html';
-import 'package:js/js.dart';
+class GreetingElement extends CustomElement {
+  GreetingElement(js.CustomElement element) : super(element);
 
-@JS('CustomElement')
-abstract class JSCustomElement<T extends CustomElement> implements HtmlElement {
-  T asDart;
-}
-
-typedef CustomElementConstructor = CustomElement Function(JSCustomElement e);
-
-@JS('defineElement')
-external void defineElement(String name, CustomElementConstructor constructor);
-
-class CustomElement {
-  final JSCustomElement element;
-
-  CustomElement(this.element) {
-    element.asDart = this;
+  void connected() {
+    print('Hello I\'m connected now');
+    text = 'Hello from Dart';
   }
 
-  void connected() {}
-  void disconnected() {}
-}
-
-class HelloElement extends CustomElement{
-  HelloElement(JSCustomElement element) : super(element);
-
-  void sayHello() {
-    element.text = 'Hello from Dart!';
-    element.style.color = '#0175C2';
+  void disconnected() {
+    print('Goodbye I\'m being disconnected now');
   }
-}
 
-class GoodbyeElement extends CustomElement {
-  GoodbyeElement(JSCustomElement element) : super(element);
+  void attributeChanged(String attribute, String oldValue, String newValue) {
+    text = 'Hello from Dart ${newValue}';
 
-  void sayGoodybe() {
-    element.text = 'Goodbye from Dart!';
-    element.style.color = '#0175C2';
+    print('Attribute: $attribute');
+    print('Old value: $oldValue');
+    print('New value: $newValue');
   }
 }
 
 void main() {
-  defineElement('dart-goodbye', allowInterop((e) => GoodbyeElement(e)));
-  defineElement('dart-hello', allowInterop((e) => HelloElement(e)));
-
-  var hello = document.body.append(Element.tag('dart-hello')) as JSCustomElement<HelloElement>;
-  hello.asDart.sayHello();
-
-  var goodbye = document.body.append(Element.tag('dart-goodbye')) as JSCustomElement<GoodbyeElement>;
-  goodbye.asDart.sayGoodybe();
+  CustomElement.register('greeting-element', (e) => GreetingElement(e), ['name']);
 }

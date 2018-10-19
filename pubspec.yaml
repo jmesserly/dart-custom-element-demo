@@ -1,5 +1,5 @@
-name: customElementDemo
-description: An absolute bare-bones web app.
+name: html_proto
+description: Alternate dart:html prototype.
 # version: 1.0.0
 #homepage: https://www.example.com
 #author: Jenny Messerly <email@example.com>
@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   js: ^0.6.0
+  meta: ^1.1.6
 
 dev_dependencies:
   build_runner: ^0.10.0
